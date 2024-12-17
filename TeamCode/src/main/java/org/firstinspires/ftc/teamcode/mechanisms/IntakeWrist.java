@@ -7,8 +7,8 @@ public class IntakeWrist {
     Servo intakeWrist;
     public enum intakeWristState {IN, OUT};
     public intakeWristState currentState = intakeWristState.IN;
-    public static final double IN = 0.00;
-    public static final double OUT = 0.30;
+    public final double IN = 0.00;
+    public final double OUT = 0.30;
     public void init(HardwareMap hm) {
         intakeWrist = hm.get(Servo.class, "intakeWrist");
     }
