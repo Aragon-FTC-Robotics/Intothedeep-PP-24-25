@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.testmechanisms;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 @TeleOp(name="IntakeWrist", group = "testing")
 public class IntakeWristTestOpmode extends LinearOpMode {
+    MultipleTelemetry dashboardTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     public IntakeWristTest intakeWrist = new IntakeWristTest();
     @Override
     public void waitForStart() {
@@ -19,8 +21,8 @@ public class IntakeWristTestOpmode extends LinearOpMode {
 
         while(opModeIsActive() && !isStopRequested()) {
             intakeWrist.Loop();
-            telemetry.addData("Last commanded position:", "%.3f", intakeWrist.POS);
-            telemetry.update();
+            dashboardTelemetry.addData("Last commanded position:", "%.3f", intakeWrist.POS);
+            dashboardTelemetry.update();
         }
     }
 }
