@@ -29,13 +29,6 @@ public class IntakeWrist {
         currentState = state;
     }
     public String getState() {
-        switch (currentState) {
-            case IN:
-                return "IN";
-            case OUT:
-                return "OUT";
-            default:
-                return "??????????";
-        }
+        return currentState.name();
     }
 }
