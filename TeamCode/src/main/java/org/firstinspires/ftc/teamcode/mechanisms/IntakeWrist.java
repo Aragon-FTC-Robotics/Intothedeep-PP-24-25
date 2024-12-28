@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class IntakeWrist {
-    Servo intakeWrist;
+    private Servo intakeWrist;
     public enum intakeWristState {IN, OUT};
     public intakeWristState currentState = intakeWristState.IN;
     public final double IN = 0.00;
@@ -22,7 +22,7 @@ public class IntakeWrist {
                 break;
         }
     }
-    public void setPosition(double pos) {
+    private void setPosition(double pos) {
         intakeWrist.setPosition(pos);
     }
     public void setState(intakeWristState state) {
