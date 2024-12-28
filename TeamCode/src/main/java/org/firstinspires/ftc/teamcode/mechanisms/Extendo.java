@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Extendo {
     private PIDController controller; //from arcrobotics
     private double pid, power;
-    public static double p=0.010, i=0, d=0.0001, f=0;
+    public static double p=0.010, i=0, d=0.00015, f=0;
     private DcMotorEx extendo;
 //    public enum extendoState {IN, OUT, MED};
     private final int MAX = -200;
