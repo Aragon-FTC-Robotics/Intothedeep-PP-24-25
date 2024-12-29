@@ -10,11 +10,11 @@ public class Bar {
     public enum BarState {TRANSFER, WALL, BUCKET, CLIP, NEUTRAL}
     public BarState currentState = BarState.NEUTRAL;
 
-    public final double transfer = 0.818;
-    public final double wall = 0.864;
-    public final double bucket = 0.262;
-    public final double clip = 0.403;
-    public final double neutral = 0.723;
+    public final double TRANSFER = 0.818;
+    public final double WALL = 0.864;
+    public final double BUCKET = 0.262;
+    public final double CLIP = 0.403;
+    public final double NEUTRAL = 0.723;
 
     public void init(HardwareMap hm) {
         barServoRight = hm.get(Servo.class, "bar");
@@ -24,22 +24,22 @@ public class Bar {
     public void Loop() {
         switch(currentState) {
             case TRANSFER:
-                setPos(transfer);
+                setPos(TRANSFER);
                 break;
             case BUCKET:
-                setPos(bucket);
+                setPos(BUCKET);
                 break;
             case WALL:
-                setPos(wall);
+                setPos(WALL);
                 break;
             case CLIP:
-                setPos(clip);
+                setPos(CLIP);
                 break;
             case NEUTRAL:
-                setPos(neutral);
+                setPos(NEUTRAL);
                 break;
             default:
-                setPos(neutral);
+                setPos(NEUTRAL);
                 break;
         }
     }

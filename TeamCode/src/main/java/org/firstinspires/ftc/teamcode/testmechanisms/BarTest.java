@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class BarTest {
     Servo bar;
-    public static double POS = 0;
+    public static double POS = 0.723;
     public void init(HardwareMap hm) {
         bar = hm.get(Servo.class, "bar");
     }

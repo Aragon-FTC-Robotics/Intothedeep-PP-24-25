@@ -31,7 +31,7 @@ public class Claw {
     }
 
 
-    public void setPos(double pos) {
+    private void setPos(double pos) {
         claw.setPosition(pos);
     }
 
