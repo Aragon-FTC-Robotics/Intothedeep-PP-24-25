@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Bar {
     private Servo barServoRight;
-    public enum BarState {TRANSFER, WALL, BUCKET, CLIP2, CLIP1, NEUTRAL}
+    public enum BarState {TRANSFER, WALL, BUCKET, CLIP, NEUTRAL}
     public BarState currentState = BarState.NEUTRAL;
 
     public final double transfer = 0.818;
@@ -17,7 +17,7 @@ public class Bar {
     public final double neutral = 0.723;
 
     public void init(HardwareMap hm) {
-        barServoRight = hm.get(Servo.class, "barRight");
+        barServoRight = hm.get(Servo.class, "bar");
         barServoRight.setDirection(Servo.Direction.REVERSE);
     }
 
@@ -32,7 +32,7 @@ public class Bar {
             case WALL:
                 setPos(wall);
                 break;
-            case CLIP2:
+            case CLIP:
                 setPos(clip);
                 break;
             case NEUTRAL:

@@ -13,7 +13,7 @@ public class Claw {
     public final double CLOSE = 0.851;
 
     public void init(HardwareMap hm) {
-        claw = hm.get(Servo.class, "claw1");
+        claw = hm.get(Servo.class, "claw");
     }
 
     public void Loop() {
