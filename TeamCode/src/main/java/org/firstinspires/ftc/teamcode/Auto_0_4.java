@@ -35,6 +35,21 @@ public class Auto_0_4 extends OpMode {
     private Path scorePreload, park;
     private PathChain grab1, grab2, grab3, score1, score2, score3;
 
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+
+        opmodeTimer.resetTimer();
+
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(STARTPOSE);
+
+        buildPaths();
+
+        //init mech
+    }
+
     public void buildPaths(){
         scorePreload = new Path(new BezierLine(new Point(STARTPOSE), new Point(PRELOADPOSE)));
         scorePreload.setLinearHeadingInterpolation(STARTPOSE.getHeading(), PRELOADPOSE.getHeading());
@@ -80,13 +95,183 @@ public class Auto_0_4 extends OpMode {
         park.setLinearHeadingInterpolation(BUCKETPOSE.getHeading(), ASCENTPOSE.getHeading());
     }
 
-    @Override
-    public void init() {
+    public void autoPath() {
+        switch (pathState) {
+            //go to bucket
+            case 0:
+                follower.followPath(scorePreload);
+                setPathState(1);
+                break;
 
+            //score preload
+            case 1:
+                if(follower.getPose().getX() > (PRELOADPOSE.getX() - 1) && follower.getPose().getY() > (PRELOADPOSE.getY() - 1)) {
+                    // slides up
+                    // bar bucket
+                    // wrist bucket
+                    // claw open
+                    // wait???
+                    // slides down
+                    // bar neutral
+                    // wrist transfer
+                    // claw close
+                    follower.followPath(grab1,true);
+                    setPathState(2);
+                }
+                break;
+
+            //pick up #1
+            case 2:
+                if(follower.getPose().getX() > (INTAKE1POSE.getX() - 1) && follower.getPose().getY() > (INTAKE1POSE.getY() - 1)) {
+                    // extendo out
+                    // intakeWrist down
+                    // flywheel in
+                    // wait??
+                    //flywheel stop
+                    // extendo in
+                    // intakeWrist in
+                    // flywheel out
+                    // wait
+                    //flywheel stop
+                    //bar transfer
+                    //claw open
+                    follower.followPath(score1,true);
+                    setPathState(3);
+                }
+                break;
+
+            //score #1
+            case 3:
+                if(follower.getPose().getX() > (BUCKETPOSE.getX() - 1) && follower.getPose().getY() > (BUCKETPOSE.getY() - 1)) {
+                    //slides up
+                    // bar bucket
+                    // wrist bucket
+                    //claw close
+                    // wait???
+                    // slides down
+                    // bar neutral
+                    // wrist transfer
+                    // claw close
+                    follower.followPath(grab2,true);
+                    setPathState(4);
+                }
+                break;
+
+            //pick up #2
+            case 4:
+                if(follower.getPose().getX() > (INTAKE2POSE.getX() - 1) && follower.getPose().getY() > (INTAKE2POSE.getY() - 1)) {
+                    // extendo out
+                    // intakeWrist down
+                    // flywheel in
+                    // wait??
+                    //flywheel stop
+                    // extendo in
+                    // intakeWrist in
+                    // flywheel out
+                    // wait
+                    //flywheel stop
+                    //bar transfer
+                    //claw open
+                    follower.followPath(score2,true);
+                    setPathState(5);
+                }
+                break;
+
+            //score #2
+            case 5:
+                if(follower.getPose().getX() > (BUCKETPOSE.getX() - 1) && follower.getPose().getY() > (BUCKETPOSE.getY() - 1)) {
+                    //slides up
+                    // bar bucket
+                    // wrist bucket
+                    //claw close
+                    // wait???
+                    // slides down
+                    // bar neutral
+                    // wrist transfer
+                    // claw close
+                    follower.followPath(grab3,true);
+                    setPathState(6);
+                }
+                break;
+
+            //pick up #3
+            case 6:
+                if(follower.getPose().getX() > (INTAKE3POSE.getX() - 1) && follower.getPose().getY() > (INTAKE3POSE.getY() - 1)) {
+                    // extendo out
+                    // intakeWrist down
+                    // flywheel in
+                    // wait??
+                    //flywheel stop
+                    // extendo in
+                    // intakeWrist in
+                    // flywheel out
+                    // wait
+                    //flywheel stop
+                    //bar transfer
+                    //claw open
+                    follower.followPath(score3,true);
+                    setPathState(7);
+                }
+                break;
+
+            //score #3
+            case 7:
+                if(follower.getPose().getX() > (BUCKETPOSE.getX() - 1) && follower.getPose().getY() > (BUCKETPOSE.getY() - 1)) {
+                    //slides up
+                    // bar bucket
+                    // wrist bucket
+                    //claw close
+                    // wait???
+                    // slides down
+                    // bar neutral
+                    // wrist transfer
+                    // claw close
+                    follower.followPath(park,true);
+                    setPathState(8);
+                }
+                break;
+
+            //park
+            case 8:
+                if(follower.getPose().getX() > (ASCENTPOSE.getX() - 1) && follower.getPose().getY() > (ASCENTPOSE.getY() - 1)) {
+                    //however we are touching the bar
+                    setPathState(-1);
+                }
+                break;
+        }
     }
 
     @Override
     public void loop() {
 
+        follower.update();
+        autoPath();
+
+        // Feedback to Driver Hub
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.update();
+    }
+
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+    @Override
+    public void init_loop() {}
+
+
+    @Override
+    public void start() {
+        opmodeTimer.resetTimer();
+        setPathState(0);
+    }
+
+    /** We do not use this because everything should automatically disable **/
+    @Override
+    public void stop() {
     }
 }
