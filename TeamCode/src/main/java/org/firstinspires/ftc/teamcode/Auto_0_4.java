@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.mechanisms.Claw;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+
+import org.firstinspires.ftc.teamcode.mechanisms.*;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
@@ -12,266 +13,156 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.*;
-
 @Autonomous(name = "0+4", group = "Auto")
 public class Auto_0_4 extends OpMode {
-    private Follower follower;
-    private Timer pathTimer, actionTimer, opmodeTimer;
-
-    private int pathState;
-
+    private Bar bar;
     private Claw claw;
+    private Extendo extendo;
+    private Intake intake;
+    private IntakeWrist intakeWrist;
+    private Slides slides;
+    private Wrist wrist;
 
-    private final Pose STARTPOSE = new Pose(7.065,83.368, Math.toRadians(-90)); //3 arguments: x, y, heading (in radians)
-    private final Pose PRELOADPOSE = new Pose(12.845, 124.217, Math.toRadians(-55));
-    private final Pose INTAKE1POSE = new Pose(45.73, 103.536, Math.toRadians(90));
-    private final Pose INTAKE2POSE = new Pose(45.73, 111.757, Math.toRadians(90));
-    private final Pose INTAKE3POSE = new Pose(45.73, 123.318, Math.toRadians(90));
-    private final Pose BUCKETPOSE = new Pose(15.157, 126.786, Math.toRadians(-45));
-    private final Pose ASCENTPOSE = new Pose(60.631, 94.801, Math.toRadians(-90));
-    private final Pose ASCENTCONTROL = new Pose(63.072, 114.326);
+
+    private Follower follower;
+    private Timer pathTime, actionTime, totalTime;
+    private int pathState = 0;
+
+    private final Pose STARTPOSE = new Pose(); //3 arguments: x, y, heading (in radians)
+    private final Pose PRELOADPOSE = new Pose();
+    private final Pose PRELOADCONTROL = new Pose();
+    private final Pose INTAKE1POSE = new Pose();
+    private final Pose INTAKE2POSE = new Pose();
+    private final Pose INTAKE3POSE = new Pose();
+    private final Pose BUCKETPOSE = new Pose();
+    private final Pose ASCENTPOSE = new Pose();
+    private final Pose ASCENTCONTROL1 = new Pose();
 
     private Path scorePreload, park;
     private PathChain grab1, grab2, grab3, score1, score2, score3;
 
-    @Override
-    public void init() {
-        pathTimer = new Timer();
-        opmodeTimer = new Timer();
-
-        opmodeTimer.resetTimer();
-
-        follower = new Follower(hardwareMap);
-        follower.setStartingPose(STARTPOSE);
-
-        buildPaths();
-
-        //init mech
-    }
-
-    public void buildPaths(){
+    private void buildPaths() {
+        //Start -> Preload bucket pos
         scorePreload = new Path(new BezierLine(new Point(STARTPOSE), new Point(PRELOADPOSE)));
         scorePreload.setLinearHeadingInterpolation(STARTPOSE.getHeading(), PRELOADPOSE.getHeading());
 
-        //get sample #1 from ground
+        //Preload bucket pos -> Intake 1
         grab1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(PRELOADPOSE), new Point(INTAKE1POSE)))
+                .addPath(
+                        new BezierLine(new Point(PRELOADPOSE), new Point(INTAKE1POSE))
+                )
                 .setLinearHeadingInterpolation(PRELOADPOSE.getHeading(), INTAKE1POSE.getHeading())
                 .build();
 
-        //score sample #1
+        //Intake 1 -> bucket
         score1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(INTAKE1POSE), new Point(BUCKETPOSE)))
+                .addPath(
+                        new BezierLine(new Point(INTAKE1POSE), new Point(BUCKETPOSE))
+                )
                 .setLinearHeadingInterpolation(INTAKE1POSE.getHeading(), BUCKETPOSE.getHeading())
                 .build();
 
-        //get sample #2
+        //Bucket -> intake 2
         grab2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(BUCKETPOSE), new Point(INTAKE2POSE)))
+                .addPath(
+                        new BezierLine(new Point(BUCKETPOSE), new Point(INTAKE2POSE))
+                )
                 .setLinearHeadingInterpolation(BUCKETPOSE.getHeading(), INTAKE2POSE.getHeading())
                 .build();
 
-        //score sample #2
+        //intake 2 -> bucket
         score2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(INTAKE2POSE), new Point(BUCKETPOSE)))
+                .addPath(
+                        new BezierLine(new Point(INTAKE2POSE), new Point(BUCKETPOSE))
+                )
                 .setLinearHeadingInterpolation(INTAKE2POSE.getHeading(), BUCKETPOSE.getHeading())
                 .build();
 
-        //get sample #3
+        //bucket -> intake 3
         grab3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(BUCKETPOSE), new Point(INTAKE3POSE)))
+                .addPath(
+                        new BezierLine(new Point(BUCKETPOSE), new Point(INTAKE3POSE))
+                )
                 .setLinearHeadingInterpolation(BUCKETPOSE.getHeading(), INTAKE3POSE.getHeading())
                 .build();
 
-        //score sample #3
+        //intake 3 -> bucket
         score3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(INTAKE3POSE), new Point(BUCKETPOSE)))
+                .addPath(
+                        new BezierLine(new Point(INTAKE3POSE), new Point(BUCKETPOSE))
+                )
                 .setLinearHeadingInterpolation(INTAKE3POSE.getHeading(), BUCKETPOSE.getHeading())
                 .build();
 
-        //park in sub
-        park = new Path(new BezierCurve(new Point(BUCKETPOSE), new Point(ASCENTCONTROL), new Point(ASCENTPOSE)));
-        park.setLinearHeadingInterpolation(BUCKETPOSE.getHeading(), ASCENTPOSE.getHeading());
+        //Bucket -> ascent (bezier curve)
+        park = new Path(new BezierCurve(
+                new Point(BUCKETPOSE),
+                new Point(ASCENTCONTROL1),
+                new Point(ASCENTPOSE)
+            )
+        );
     }
-
-    public void autoPath() {
+    private void updatePaths() {
         switch (pathState) {
-            //go to bucket
             case 0:
-                follower.followPath(scorePreload);
+                slides.setTargetPos(slides.HIGH);
+                bar.setState(Bar.BarState.BUCKET);
+                wrist.setState(Wrist.wristState.BUCKET);
+                claw.setState(Claw.ClawState.CLOSE);
+                follower.followPath(scorePreload); //Start -> preload score
                 setPathState(1);
                 break;
-
-            //score preload
             case 1:
-                if(follower.getPose().getX() > (PRELOADPOSE.getX() - 1) && follower.getPose().getY() > (PRELOADPOSE.getY() - 1)) {
-                    // slides up
-                    // bar bucket
-                    // wrist bucket
-                    // claw open
-                    // wait???
-                    // slides down
-                    // bar neutral
-                    // wrist transfer
-                    // claw close
-                    follower.followPath(grab1,true);
+                if ((Math.abs(PRELOADPOSE.getX() - follower.getPose().getX()) <= 1) && (Math.abs(PRELOADPOSE.getY() - follower.getPose().getY()) <= 1)) {
+                    claw.setState(Claw.ClawState.OPEN);
+                    follower.followPath(grab1, true); //preload score -> samp1
                     setPathState(2);
                 }
                 break;
-
-            //pick up #1
             case 2:
-                if(follower.getPose().getX() > (INTAKE1POSE.getX() - 1) && follower.getPose().getY() > (INTAKE1POSE.getY() - 1)) {
-                    // extendo out
-                    // intakeWrist down
-                    // flywheel in
-                    // wait??
-                    //flywheel stop
-                    // extendo in
-                    // intakeWrist in
-                    // flywheel out
-                    // wait
-                    //flywheel stop
-                    //bar transfer
-                    //claw open
-                    follower.followPath(score1,true);
-                    setPathState(3);
+                if ((Math.abs(BUCKETPOSE.getX() - follower.getPose().getX()) <= 1) && (Math.abs(BUCKETPOSE.getY() - follower.getPose().getY()) <= 1)) {
+                    intake.setState(Intake.intakeState.IN);
+                    follower.followPath(grab1, true);
+                    setPathState(2);
                 }
                 break;
+                //Todo later: figure out how to stop intaking after x seconds
 
-            //score #1
-            case 3:
-                if(follower.getPose().getX() > (BUCKETPOSE.getX() - 1) && follower.getPose().getY() > (BUCKETPOSE.getY() - 1)) {
-                    //slides up
-                    // bar bucket
-                    // wrist bucket
-                    //claw close
-                    // wait???
-                    // slides down
-                    // bar neutral
-                    // wrist transfer
-                    // claw close
-                    follower.followPath(grab2,true);
-                    setPathState(4);
-                }
-                break;
-
-            //pick up #2
-            case 4:
-                if(follower.getPose().getX() > (INTAKE2POSE.getX() - 1) && follower.getPose().getY() > (INTAKE2POSE.getY() - 1)) {
-                    // extendo out
-                    // intakeWrist down
-                    // flywheel in
-                    // wait??
-                    //flywheel stop
-                    // extendo in
-                    // intakeWrist in
-                    // flywheel out
-                    // wait
-                    //flywheel stop
-                    //bar transfer
-                    //claw open
-                    follower.followPath(score2,true);
-                    setPathState(5);
-                }
-                break;
-
-            //score #2
-            case 5:
-                if(follower.getPose().getX() > (BUCKETPOSE.getX() - 1) && follower.getPose().getY() > (BUCKETPOSE.getY() - 1)) {
-                    //slides up
-                    // bar bucket
-                    // wrist bucket
-                    //claw close
-                    // wait???
-                    // slides down
-                    // bar neutral
-                    // wrist transfer
-                    // claw close
-                    follower.followPath(grab3,true);
-                    setPathState(6);
-                }
-                break;
-
-            //pick up #3
-            case 6:
-                if(follower.getPose().getX() > (INTAKE3POSE.getX() - 1) && follower.getPose().getY() > (INTAKE3POSE.getY() - 1)) {
-                    // extendo out
-                    // intakeWrist down
-                    // flywheel in
-                    // wait??
-                    //flywheel stop
-                    // extendo in
-                    // intakeWrist in
-                    // flywheel out
-                    // wait
-                    //flywheel stop
-                    //bar transfer
-                    //claw open
-                    follower.followPath(score3,true);
-                    setPathState(7);
-                }
-                break;
-
-            //score #3
-            case 7:
-                if(follower.getPose().getX() > (BUCKETPOSE.getX() - 1) && follower.getPose().getY() > (BUCKETPOSE.getY() - 1)) {
-                    //slides up
-                    // bar bucket
-                    // wrist bucket
-                    //claw close
-                    // wait???
-                    // slides down
-                    // bar neutral
-                    // wrist transfer
-                    // claw close
-                    follower.followPath(park,true);
-                    setPathState(8);
-                }
-                break;
-
-            //park
-            case 8:
-                if(follower.getPose().getX() > (ASCENTPOSE.getX() - 1) && follower.getPose().getY() > (ASCENTPOSE.getY() - 1)) {
-                    //however we are touching the bar
-                    setPathState(-1);
-                }
-                break;
         }
     }
-
+    private void setPathState(int n) {
+        pathState = n;
+        pathTime.resetTimer();
+    }
+    @Override
+    public void init() {
+        pathTime = new Timer();
+        totalTime = new Timer();
+        totalTime.resetTimer();
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(STARTPOSE);
+        buildPaths();
+        bar = new Bar();
+        claw = new Claw();
+        extendo = new Extendo();
+        intake = new Intake();
+        intakeWrist = new IntakeWrist();
+        slides = new Slides();
+        //Todo later: declare every mechanism
+    }
+    @Override
+    public void start() {
+        totalTime.resetTimer();
+        setPathState(0);
+    }
     @Override
     public void loop() {
-
         follower.update();
-        autoPath();
-
-        // Feedback to Driver Hub
+        updatePaths();
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.update();
-    }
-
-    public void setPathState(int pState) {
-        pathState = pState;
-        pathTimer.resetTimer();
-    }
-
-    @Override
-    public void init_loop() {}
-
-
-    @Override
-    public void start() {
-        opmodeTimer.resetTimer();
-        setPathState(0);
-    }
-
-    /** We do not use this because everything should automatically disable **/
-    @Override
-    public void stop() {
     }
 }
