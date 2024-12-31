@@ -28,15 +28,14 @@ public class Auto_0_4 extends OpMode {
     private Timer pathTime, actionTime, totalTime;
     private int pathState = 0;
 
-    private final Pose STARTPOSE = new Pose(); //3 arguments: x, y, heading (in radians)
-    private final Pose PRELOADPOSE = new Pose();
-    private final Pose PRELOADCONTROL = new Pose();
-    private final Pose INTAKE1POSE = new Pose();
-    private final Pose INTAKE2POSE = new Pose();
-    private final Pose INTAKE3POSE = new Pose();
-    private final Pose BUCKETPOSE = new Pose();
-    private final Pose ASCENTPOSE = new Pose();
-    private final Pose ASCENTCONTROL1 = new Pose();
+    private final Pose STARTPOSE = new Pose(7.065,83.368, Math.toRadians(-90));
+    private final Pose PRELOADPOSE = new Pose(12.845, 124.217, Math.toRadians(-55));
+    private final Pose INTAKE1POSE = new Pose(45.73, 103.536, Math.toRadians(90));
+    private final Pose INTAKE2POSE = new Pose(45.73, 111.757, Math.toRadians(90));
+    private final Pose INTAKE3POSE = new Pose(45.73, 123.318, Math.toRadians(90));
+    private final Pose BUCKETPOSE = new Pose(15.157, 126.786, Math.toRadians(-45));
+    private final Pose ASCENTPOSE = new Pose(60.631, 94.801, Math.toRadians(-90));
+    private final Pose ASCENTCONTROL1 = new Pose(63.072, 114.326);
 
     private Path scorePreload, park;
     private PathChain grab1, grab2, grab3, score1, score2, score3;
