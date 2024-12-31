@@ -25,7 +25,7 @@ public class Auto_0_4 extends OpMode {
 
 
     private Follower follower;
-    private Timer pathTime, actionTime, totalTime;
+    private Timer pathTime, totalTime;
     private int pathState = 0;
 
     private final Pose STARTPOSE = new Pose(7.065,83.368, Math.toRadians(-90));
@@ -119,14 +119,18 @@ public class Auto_0_4 extends OpMode {
                 }
                 break;
             case 2:
-                if ((Math.abs(BUCKETPOSE.getX() - follower.getPose().getX()) <= 1) && (Math.abs(BUCKETPOSE.getY() - follower.getPose().getY()) <= 1)) {
+                if ((Math.abs(BUCKETPOSE.getX() - follower.getPose().getX()) <= 0.3) && (Math.abs(BUCKETPOSE.getY() - follower.getPose().getY()) <= 0.3)) {
+                    slides.setTargetPos(slides.GROUND);
+                    bar.setState(Bar.BarState.NEUTRAL);
+                    wrist.setState(Wrist.wristState.NEUTRAL);
+                    claw.setState(Claw.ClawState.CLOSE);
                     extendo.setTargetPos(Extendo.MAX);
                     intake.setState(Intake.intakeState.IN);
-                    follower.followPath(grab1, true);
-                    setPathState(2);
+                    setPathState(3);
                 }
                 break;
-                //Todo later: Finish auto
+            case 3:
+                if (pathTime.getElapsedTimeSeconds() > 1)
 
         }
     }
