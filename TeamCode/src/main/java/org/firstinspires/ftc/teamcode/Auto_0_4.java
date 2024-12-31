@@ -130,7 +130,7 @@ public class Auto_0_4 extends OpMode {
                 }
                 break;
             case 3:
-                if (pathTime.getElapsedTimeSeconds() > 1)
+                if (pathTime.getElapsedTimeSeconds() > 1);
 
         }
     }
