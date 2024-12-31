@@ -126,11 +126,44 @@ public class Auto_0_4 extends OpMode {
                     claw.setState(Claw.ClawState.CLOSE);
                     extendo.setTargetPos(Extendo.MAX);
                     intake.setState(Intake.intakeState.IN);
+                    intakeWrist.setState(IntakeWrist.intakeWristState.OUT);
+
                     setPathState(3);
                 }
                 break;
             case 3:
-                if (pathTime.getElapsedTimeSeconds() > 1)
+                if (pathTime.getElapsedTimeSeconds() > 2) {
+                    intake.setState(Intake.intakeState.STOP);
+                    extendo.setTargetPos(Extendo.MIN);
+                    intakeWrist.setState(IntakeWrist.intakeWristState.IN);
+                    follower.followPath(score1, true); //Samp 1 -> bucket
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if (pathTime.getElapsedTimeSeconds() > 2) {
+                    bar.setState(Bar.BarState.TRANSFER);
+                    wrist.setState(Wrist.wristState.TRANSFER);
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                if (pathTime.getElapsedTimeSeconds() > 2) {
+                    claw.setState(Claw.ClawState.OPEN);
+                    setPathState(6);
+                }
+                break;
+            case 6:
+                if (pathTime.getElapsedTimeSeconds() > 2) {
+                    slides.setTargetPos(Slides.HIGH);
+                    bar.setState(Bar.BarState.BUCKET);
+                    wrist.setState(Wrist.wristState.BUCKET);
+                }
+                break;
+            case 7:
+                if (pathTime.getElapsedTimeSeconds() > 2) {
+                    claw.setState(Claw.ClawState.OPEN);
+                }
 
         }
     }
