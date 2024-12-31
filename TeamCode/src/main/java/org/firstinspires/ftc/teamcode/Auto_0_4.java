@@ -121,12 +121,13 @@ public class Auto_0_4 extends OpMode {
                 break;
             case 2:
                 if ((Math.abs(BUCKETPOSE.getX() - follower.getPose().getX()) <= 1) && (Math.abs(BUCKETPOSE.getY() - follower.getPose().getY()) <= 1)) {
+                    extendo.setTargetPos(Extendo.MAX);
                     intake.setState(Intake.intakeState.IN);
                     follower.followPath(grab1, true);
                     setPathState(2);
                 }
                 break;
-                //Todo later: figure out how to stop intaking after x seconds
+                //Todo later: Finish auto
 
         }
     }
@@ -142,13 +143,27 @@ public class Auto_0_4 extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(STARTPOSE);
         buildPaths();
+
         bar = new Bar();
         claw = new Claw();
         extendo = new Extendo();
         intake = new Intake();
         intakeWrist = new IntakeWrist();
         slides = new Slides();
-        //Todo later: declare every mechanism
+        wrist = new Wrist();
+
+        bar.init(hardwareMap);
+        claw.init(hardwareMap);
+        extendo.init(hardwareMap);
+        intake.init(hardwareMap);
+        intakeWrist.init(hardwareMap);
+        slides.init(hardwareMap);
+        wrist.init(hardwareMap);
+
+        claw.setState(Claw.ClawState.CLOSE);
+        bar.setState(Bar.BarState.NEUTRAL);
+        wrist.setState(Wrist.wristState.NEUTRAL);
+
     }
     @Override
     public void start() {

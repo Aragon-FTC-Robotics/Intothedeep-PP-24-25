@@ -13,10 +13,10 @@ public class Slides {
     DcMotorEx slideLeft;
     DcMotorEx slideRight;
     private double pid, power;
-    public final int GROUND = -30;
-    public final int LOW = 200;
-    public final int MED = 1350;
-    public final int HIGH = 2600;
+    public static final int GROUND = -30;
+    public static final int LOW = 200;
+    public static final int MED = 1350;
+    public static final int HIGH = 2600;
     public int targetPos = 0;
     public void init(HardwareMap hm) {
         controller = new PIDController(p,i,d);

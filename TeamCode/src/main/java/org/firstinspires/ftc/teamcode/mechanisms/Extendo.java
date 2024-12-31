@@ -16,9 +16,9 @@ public class Extendo {
     public static double p=0.010, i=0, d=0.00015, f=0;
     private DcMotorEx extendo;
 //    public enum extendoState {IN, OUT, MED};
-    private final int MAX = -200;
-    private final int MIN = 600;
-    private final int MED = 300;
+    public static final int MAX = 2000;
+    public static final int MIN = -200;
+    public static final int MED = 1000;
     private int targetPos = 0;
     public void init(HardwareMap hm) {
         controller = new PIDController(p,i,d);
